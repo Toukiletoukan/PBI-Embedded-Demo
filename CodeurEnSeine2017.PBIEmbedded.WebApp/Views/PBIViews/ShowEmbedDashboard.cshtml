@@ -1,0 +1,71 @@
+﻿@model CodeurEnSeine2017.PBIEmbeded.WebApp.Models.ShowEmbedDashboardVieModel
+
+@Scripts.Render("~/bundles/powerbi")
+
+@Html.Hidden("MainContent_txtEmbedUrl", Model.EmbedUrl)
+@Html.Hidden("MainContent_txtDashboardId", Model.DashboardId)
+@Html.Hidden("MainContent_accessToken", Model.AccessToken)
+
+@{
+    ViewBag.Title = Model.DashboardName;
+}
+
+<div>
+    <h3>Embedded dashboard <i>"@Model.DashboardName"</i></h3>
+    <br />
+    <div ID="dashboardContainer" style="height: 500px"></div>
+</div>
+
+<div>
+    <h3>Log View</h3>
+    <br />
+    <div ID="logView"></div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            
+            var accessToken = document.getElementById('MainContent_accessToken').value;
+
+            if (!accessToken || accessToken == "") {
+                return;
+            }
+            var embedUrl = document.getElementById('MainContent_txtEmbedUrl').value;
+            var dashboardId = document.getElementById('MainContent_txtDashboardId').value;
+            // Embed configuration used to describe the what and how to embed.
+            // This object is used when calling powerbi.embed.
+            // This also includes settings and options such as filters.
+            // You can find more information at https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details.
+            var config = {
+                type: 'dashboard',
+                accessToken: accessToken,
+                embedUrl: embedUrl,
+                id: dashboardId,
+                settings: {
+                    filterPaneEnabled: true,
+                    navContentPaneEnabled: true
+                }
+            };
+            // Grab the reference to the div HTML element that will host the report.
+            var reportContainer = document.getElementById('dashboardContainer');
+            // Embed the report and display it within the div container.
+            var report = powerbi.embed(reportContainer, config);
+            // Report.on will add an event handler which prints to Log window.
+            report.on("loaded", function () {
+                var logView = document.getElementById('logView');
+                logView.innerHTML = logView.innerHTML + "Loaded<br/>";
+                // Report.off removes a given event handler if it exists.
+                report.off("loaded");
+            });
+            // Report.on will add an event handler which prints to Log window.
+            report.on("rendered", function () {
+                var logView = document.getElementById('logView');
+                logView.innerHTML = logView.innerHTML + "Rendered<br/>";
+                // Report.off removes a given event handler if it exists.
+                report.off("rendered");
+            });
+        };
+    </script>
+}

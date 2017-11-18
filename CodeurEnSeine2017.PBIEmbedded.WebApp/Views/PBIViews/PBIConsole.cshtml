@@ -1,0 +1,24 @@
+﻿@model CodeurEnSeine2017.PBIEmbeded.WebApp.Models.PBIItemsListViewModel
+
+@{
+    ViewBag.Title = "PBI Console";
+}
+
+<h2>Reports</h2>
+
+<ul>
+@foreach (var report in Model.Reports)
+{
+    <li>@Html.ActionLink(report.Name,"ShowReport", "PBI",new { reportid = report.Id, reporturl = Html.Raw(report.EmbedUrl), reportname = report.Name, accesstoken = Model.AccessToken }, null)</li>
+}
+</ul>
+
+<h2>Dashboards</h2>
+
+<ul>
+    @foreach (var dashboard in Model.Dashboards)
+    {
+        <li>@Html.ActionLink(dashboard.DisplayName, "ShowDashboard", "PBI", new { dashboardid = dashboard.Id, dashboardurl = dashboard.EmbedUrl, dashboardname = dashboard.DisplayName, accesstoken = Model.AccessToken }, null)</li>
+    }
+</ul>
+
